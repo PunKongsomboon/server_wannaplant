@@ -186,7 +186,7 @@ app.post('/login', function (req, res) {
 })
 
 app.post('/allland', function (req, res) {
-    const sql = "SELECT picture.pic_name , lands.land_id , lands.land_area , lands.land_unit , lands.land_description , plants.plants_name , plants.plants_price , user.user_id , user.name , user.phonenumber , user.address FROM picture JOIN lands ON picture.land_id = lands.land_id JOIN plants ON plants.land_id = lands.land_id JOIN user ON lands.user_id = user.user_id";
+    const sql = "SELECT picture.pic_name , lands.land_id , lands.land_area , lands.land_unit , plants.plants_name , user.address , activities.rating FROM picture JOIN lands ON picture.land_id = lands.land_id JOIN plants ON plants.land_id = lands.land_id JOIN user ON lands.user_id = user.user_id LEFT OUTER JOIN activities ON user.user_id = activities.planter GROUP BY plants.plants_id";
     con.query(sql, function (err, result) {
         if (err) {
             console.log(err);
