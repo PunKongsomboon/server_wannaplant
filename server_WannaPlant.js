@@ -21,15 +21,15 @@ app.get('/', function (req, res) {
 })
 
 app.post('/register', function (req, res) {
-    const { name, username, password, phonenumber, address, protmptpay, identify, role, check_role } = req.body;
+    const { name, username, password, phonenumber, address, province, protmptpay, identify, role, check_role } = req.body;
     if (check_role == "guest") {
         bcrypt.hash(password, 10, function (err, hash) {
             if (err) {
                 console.log(err);
                 res.status(500).send("hash error");
             } else {
-                const sql = "INSERT INTO user (name , username , password , phonenumber , address , promptpay , identify , role) VALUES (?,?,?,?,?,?,?,?)";
-                con.query(sql, [name, username, hash, phonenumber, address, protmptpay, parseInt(identify), parseInt(role)], function (err, result) {
+                const sql = "INSERT INTO user (name , username , password , phonenumber , address , province , promptpay , identify , role) VALUES (?,?,?,?,?,?,?,?,?)";
+                con.query(sql, [name, username, hash, phonenumber, address, province, protmptpay, parseInt(identify), parseInt(role)], function (err, result) {
                     if (err) {
                         console.log(err);
                         res.status(500).send("Database error");
@@ -38,8 +38,8 @@ app.post('/register', function (req, res) {
                             console.log("INSERT ERROR");
                             res.status(500).send("INSERT ERROR");
                         } else {
-                            const sql = "SELECT user.user_id FROM user WHERE user.name = ? AND user.username = ? AND phonenumber = ?"
-                            con.query(sql, [name, username, phonenumber], function (err, result) {
+                            const sql = "SELECT * FROM user WHERE user.username = ?"
+                            con.query(sql, [username], function (err, result) {
                                 if (err) {
                                     console.log(err);
                                     res.status(500).send("DATABASE ERROR");
@@ -61,7 +61,7 @@ app.post('/register', function (req, res) {
         });
 
     } else {
-        res.status(400).send("Not allowed to access server");
+        res.status(404).send("Not allowed to access server");
     }
 
 })
@@ -148,7 +148,7 @@ app.post('/registerland', function (req, res) {
 
 
             } else {
-                res.status(400).send("Not allowed to access server");
+                res.status(404).send("Not allowed to access server");
             }
 
 
@@ -186,38 +186,59 @@ app.post('/login', function (req, res) {
 })
 
 app.post('/allland', function (req, res) {
-    const sql = "SELECT picture.pic_name , lands.land_id , lands.land_area , lands.land_unit , plants.plants_name , user.address , activities.rating FROM picture JOIN lands ON picture.land_id = lands.land_id JOIN plants ON plants.land_id = lands.land_id JOIN user ON lands.user_id = user.user_id LEFT OUTER JOIN activities ON user.user_id = activities.planter GROUP BY plants.plants_id";
-    con.query(sql, function (err, result) {
-        if (err) {
-            console.log(err);
-            res.status(500).send("DATABASE ERROR");
-        } else {
-            res.send(result);
-        }
-    })
+    const { user_check } = req.body;
+    if (user_check == "user") {
+        const sql = "SELECT picture.pic_name , lands.land_id , lands.land_area , lands.land_unit , plants.plants_name , user.user_id , user.identify , user.role , user.address, user.province , activities.rating FROM picture JOIN lands ON picture.land_id = lands.land_id JOIN plants ON plants.land_id = lands.land_id JOIN user ON lands.user_id = user.user_id LEFT OUTER JOIN activities ON user.user_id = activities.planter GROUP BY plants.plants_id";
+        con.query(sql, function (err, result) {
+            if (err) {
+                console.log(err);
+                res.status(500).send("DATABASE ERROR");
+            } else {
+                res.send(result);
+            }
+        })
+    } else {
+        res.status(404).send("Not allowed to access server");
+    }
+
 })
 
-// app.post('/registerlandpicture', function (req, res) {
+app.post('/infoland', function (req, res) {
+    const { idland, user_check } = req.body;
+    if (user_check == "user") {
+        const sql = "SELECT picture.pic_name , user.user_id , user.province , user.name , lands.land_area , lands.land_unit , lands.land_description , plants.plants_name , plants.plants_price , activities.rating , COUNT(activities.planter) AS planted FROM picture JOIN lands ON picture.land_id = lands.land_id JOIN plants ON plants.land_id = lands.land_id JOIN user ON user.user_id = lands.user_id LEFT OUTER JOIN activities ON activities.planter = user.user_id WHERE lands.land_id = ? GROUP BY plants.plants_name";
+        con.query(sql, [parseInt(idland)], function (err, result) {
+            if (err) {
+                console.log(err);
+                res.status(500).send("DATABASE ERROR");
+            } else {
+                res.send(result);
+            }
+        });
+    } else {
+        res.status(404).send("Not allowed to access server");
+    }
 
-//     upload(req, res, function (err) {
-//         if (err) {
-//             console.log(err);
-//             res.status(500).send("Upload error");
-//         } else {
-//             const filename = req.files;
-//             const { land_id } = req.body;
-//             let arrayimage = "";
-//             for (let i = 0; i < filename.length; i++) {
-//                 arrayimage += filename[i].filename + ",";
-//             }
-//             console.log(arrayimage);
-//             // const sql = "";
-//             // con.query()
-//             res.send("ok");
-//         }
-//     })
+})
 
-// })
+app.post('/infolandpic', function (req, res) {
+    const { idland, user_check } = req.body;
+    if (user_check == "user") {
+        const sql = "SELECT picture.pic_name FROM picture WHERE picture.land_id = ?";
+        con.query(sql, [parseInt(idland)], function (err, result) {
+            if (err) {
+                console.log(err);
+                res.status(500).send("DATABASE ERROR");
+            } else {
+                res.send(result);
+            }
+        })
+    } else {
+        res.status(404).send("Not allowed to access server");
+    }
+})
+
+
 
 
 

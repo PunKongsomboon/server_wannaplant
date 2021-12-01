@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 28, 2021 at 06:50 PM
+-- Generation Time: Nov 30, 2021 at 03:56 PM
 -- Server version: 10.4.21-MariaDB
 -- PHP Version: 7.3.31
 
@@ -68,7 +68,8 @@ CREATE TABLE `lands` (
 --
 
 INSERT INTO `lands` (`land_id`, `land_area`, `land_unit`, `land_description`, `user_id`) VALUES
-(20, 300, 'Square Centimeter', 'fasdfasdf', 32);
+(20, 300, 'Square Centimeter', 'fasdfasdf', 32),
+(21, 125, 'Square Meter', 'My land beautiful', 33);
 
 -- --------------------------------------------------------
 
@@ -88,7 +89,10 @@ CREATE TABLE `picture` (
 
 INSERT INTO `picture` (`pic_id`, `pic_name`, `land_id`) VALUES
 (21, '1638117927573_image_picker801988174.jpg', 20),
-(22, '1638117928118_image_picker45157347.jpg', 20);
+(22, '1638117928118_image_picker45157347.jpg', 20),
+(23, '1638162050530_image_picker466360730.jpg', 21),
+(24, '1638162052241_image_picker1750043865.jpg', 21),
+(25, '1638162052243_image_picker1701577681.jpg', 21);
 
 -- --------------------------------------------------------
 
@@ -109,7 +113,8 @@ CREATE TABLE `plants` (
 
 INSERT INTO `plants` (`plants_id`, `plants_name`, `plants_price`, `land_id`) VALUES
 (28, 'carrat', 20, 20),
-(29, 'apple', 30, 20);
+(29, 'apple', 30, 20),
+(30, 'Carrot', 150, 21);
 
 -- --------------------------------------------------------
 
@@ -124,6 +129,7 @@ CREATE TABLE `user` (
   `password` varchar(60) COLLATE utf8_unicode_ci NOT NULL,
   `phonenumber` varchar(10) COLLATE utf8_unicode_ci NOT NULL,
   `address` varchar(150) COLLATE utf8_unicode_ci NOT NULL,
+  `province` varchar(60) COLLATE utf8_unicode_ci NOT NULL,
   `promptpay` varchar(15) COLLATE utf8_unicode_ci NOT NULL,
   `facephoto` varchar(200) COLLATE utf8_unicode_ci NOT NULL,
   `idcardphoto` varchar(200) COLLATE utf8_unicode_ci NOT NULL,
@@ -135,8 +141,9 @@ CREATE TABLE `user` (
 -- Dumping data for table `user`
 --
 
-INSERT INTO `user` (`user_id`, `name`, `username`, `password`, `phonenumber`, `address`, `promptpay`, `facephoto`, `idcardphoto`, `identify`, `role`) VALUES
-(32, 'pun Kongsomboon', 'punonly', '$2b$10$6T9TyvNk1kNohVPW0aBmRu6uuuGjdyygeN/6jsTl3HO4ikZ/wpJqy', '0655060401', 'dfsdfas', '0655060401', '', '', 1, 2);
+INSERT INTO `user` (`user_id`, `name`, `username`, `password`, `phonenumber`, `address`, `province`, `promptpay`, `facephoto`, `idcardphoto`, `identify`, `role`) VALUES
+(32, 'pun Kongsomboon', 'punonly', '$2b$10$6T9TyvNk1kNohVPW0aBmRu6uuuGjdyygeN/6jsTl3HO4ikZ/wpJqy', '0655060401', 'dfsdfas', 'Chiang Mai', '0655060401', '', '', 1, 2),
+(33, 'Peetikorn', 'kunnkorn', '$2b$10$E2VNgDbLdN12YONCSvXnIOPZEKqcj.1pzKbJPg/36a6AQVD.SF/dC', '0992088711', '104 Aloha thailand', 'Chiang Rai', '0992088711', '', '', 1, 2);
 
 --
 -- Indexes for dumped tables
@@ -199,25 +206,25 @@ ALTER TABLE `activities`
 -- AUTO_INCREMENT for table `lands`
 --
 ALTER TABLE `lands`
-  MODIFY `land_id` mediumint(7) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `land_id` mediumint(7) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `picture`
 --
 ALTER TABLE `picture`
-  MODIFY `pic_id` mediumint(7) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `pic_id` mediumint(7) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `plants`
 --
 ALTER TABLE `plants`
-  MODIFY `plants_id` mediumint(7) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+  MODIFY `plants_id` mediumint(7) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `user_id` mediumint(7) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
+  MODIFY `user_id` mediumint(7) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 
 --
 -- Constraints for dumped tables
