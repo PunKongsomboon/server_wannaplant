@@ -38,7 +38,7 @@ app.post('/register', function (req, res) {
                             console.log("INSERT ERROR");
                             res.status(500).send("INSERT ERROR");
                         } else {
-                            const sql = "SELECT * FROM user WHERE user.username = ?"
+                            const sql = "SELECT * FROM user LEFT OUTER JOIN activities ON activities.customer = user.user_id WHERE user.username = ?"
                             con.query(sql, [username], function (err, result) {
                                 if (err) {
                                     console.log(err);
@@ -160,12 +160,13 @@ app.post('/registerland', function (req, res) {
 
 app.post('/login', function (req, res) {
     const { username, password } = req.body;
-    const sql = "SELECT * FROM user WHERE user.username = ?";
+    const sql = "SELECT * FROM user LEFT OUTER JOIN activities ON activities.customer = user.user_id WHERE user.username = ?";
     con.query(sql, [username], function (err, result) {
         if (err) {
             console.log(err);
             res.status(500).send("DATABASE ERROR");
         } else {
+
             if (result.length != 1) {
                 res.status(400).send("Username wrong");
             } else {
@@ -239,7 +240,18 @@ app.post('/infolandpic', function (req, res) {
 })
 
 
-
+app.post('/profilepic', function (req, res) {
+    const { user_id } = req.body;
+    const sql = "SELECT picture.pic_name FROM picture JOIN lands ON lands.land_id = picture.land_id JOIN user ON user.user_id = lands.user_id WHERE user.user_id = ?";
+    con.query(sql, [parseInt(user_id)], function (err, result) {
+        if (err) {
+            console.log(err);
+            console.log("DATABASE ERROR");
+        } else {
+            res.send(result);
+        }
+    })
+})
 
 
 app.listen(3000, function () {
