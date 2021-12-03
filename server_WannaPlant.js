@@ -337,6 +337,24 @@ app.post('/favbtn', function (req, res) {
     }
 })
 
+app.post('/datafavorite', function (req, res) {
+    const { user_id, land_id, check_role } = req.body;
+    if (check_role == "user") {
+        const sql = "SELECT picture.pic_name , lands.land_id , lands.land_area , lands.land_unit , lands.user_id , plants.plants_name , user.province , activities.rating FROM picture JOIN lands ON lands.land_id = picture.land_id JOIN plants ON plants.land_id = lands.land_id JOIN favorites ON favorites.land_id = lands.land_id JOIN user ON user.user_id = favorites.user_id LEFT OUTER JOIN activities ON lands.land_id = activities.land_id WHERE favorites.user_id = ? GROUP BY plants.plants_id";
+        con.query(sql, [user_id, land_id], function (err, result) {
+            if (err) {
+                console.log(err);
+                res.status(500).send("DATABASE ERROR");
+            } else {
+                res.send(result);
+            }
+        })
+    } else {
+        res.status(404).send("Not allowed to access server");
+    }
+
+})
+
 app.listen(3000, function () {
     console.log('Server starts at port 3000');
 })
