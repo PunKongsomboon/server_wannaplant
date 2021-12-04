@@ -355,6 +355,41 @@ app.post('/datafavorite', function (req, res) {
 
 })
 
+app.post('/addactivity', function (req, res) {
+    const { dataincart, check_role } = req.body;
+    let datacart = JSON.parse(dataincart);
+    // console.log(datacart);
+    var time = new Date();
+    var date = time.getDate() + '-' + (time.getMonth() + 1) + '-' + time.getFullYear();
+    // console.log(date);
+    if (check_role == "user") {
+        const sql = "INSERT INTO activities(tracking, rating, datetime, plants_name, total_price, customer, planter, land_id) VALUES (?,?,?,?,?,?,?,?)";
+        for (let i = 0; i < datacart.length; i++) {
+            con.query(sql, [0, 0, String(date), datacart[i]['plants_name'], datacart[i]['total_money'], datacart[i]['customer_id'], datacart[i]['planter_id'], datacart[i]['land_id']], function (err, result) {
+                if (err) {
+                    console.log(err);
+                    res.status(500).send("DATABASE ERROR");
+                } else {
+                    if (result.affectedRows != 1) {
+                        res.status(500).send("INSERT ERROR");
+                    } else {
+                        if (i + 1 == datacart.length) {
+                            res.send();
+                        }
+
+                    }
+
+                }
+            })
+        }
+
+
+        // res.send();
+    } else {
+        res.status(404).send("Not allowed to access server");
+    }
+})
+
 app.listen(3000, function () {
     console.log('Server starts at port 3000');
 })

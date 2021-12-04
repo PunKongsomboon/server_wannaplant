@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 03, 2021 at 07:43 PM
+-- Generation Time: Dec 04, 2021 at 09:33 PM
 -- Server version: 10.4.21-MariaDB
 -- PHP Version: 7.3.31
 
@@ -31,16 +31,23 @@ USE `wanna_plant`;
 
 CREATE TABLE `activities` (
   `activity_id` mediumint(7) NOT NULL,
-  `activity_type` tinyint(3) NOT NULL,
   `tracking` tinyint(3) NOT NULL,
   `rating` float NOT NULL,
-  `datetime` date NOT NULL,
+  `datetime` varchar(30) COLLATE utf8_unicode_ci NOT NULL,
   `plants_name` varchar(30) COLLATE utf8_unicode_ci NOT NULL,
   `total_price` int(11) NOT NULL,
   `customer` mediumint(7) NOT NULL,
   `planter` mediumint(7) NOT NULL,
   `land_id` mediumint(7) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Dumping data for table `activities`
+--
+
+INSERT INTO `activities` (`activity_id`, `tracking`, `rating`, `datetime`, `plants_name`, `total_price`, `customer`, `planter`, `land_id`) VALUES
+(7, 0, 0, '5-12-2021', 'carrot', 150, 32, 33, 21),
+(8, 0, 0, '5-12-2021', 'popcorn', 144, 32, 39, 23);
 
 -- --------------------------------------------------------
 
@@ -59,7 +66,8 @@ CREATE TABLE `favorites` (
 
 INSERT INTO `favorites` (`user_id`, `land_id`) VALUES
 (32, 21),
-(32, 23);
+(32, 23),
+(39, 20);
 
 -- --------------------------------------------------------
 
@@ -231,7 +239,7 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT for table `activities`
 --
 ALTER TABLE `activities`
-  MODIFY `activity_id` mediumint(7) NOT NULL AUTO_INCREMENT;
+  MODIFY `activity_id` mediumint(7) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `lands`
