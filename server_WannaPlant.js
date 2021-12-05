@@ -393,7 +393,7 @@ app.post('/addactivity', function (req, res) {
 app.post('/tracking', function (req, res) {
     const { user_id, check_role } = req.body;
     if (check_role == "user") {
-        const sql = "SELECT * FROM activities WHERE activities.customer = ? OR activities.planter = ? AND activities.status != 0 AND activities.tracking != 6";
+        const sql = "SELECT * FROM activities WHERE activities.customer = ? OR activities.planter = ? AND activities.status != 0 AND activities.tracking <= 6 ";
         con.query(sql, [user_id, user_id], function (err, result) {
             if (err) {
                 console.log(err);
@@ -448,6 +448,53 @@ app.post('/updatetracking', function (req, res) {
     } else {
         res.status(404).send("Not allowed to access server");
     }
+})
+
+app.post('/cancelordertracking', function (req, res) {
+    const { activity_id, check_role } = req.body;
+    if (check_role == "user") {
+        const sql = "UPDATE activities SET status = ? WHERE activities.activity_id = ?";
+        con.query(sql, [0, activity_id], function (err, result) {
+            if (err) {
+                console.log(err);
+                res.status(500).send("DATABASE ERROR");
+            } else {
+                if (result.affectedRows != 1) {
+                    console.log(err);
+                    res.status(500).send("UPDATE ERROR");
+                } else {
+                    res.send();
+                }
+            }
+        });
+    } else {
+        res.status(404).send("Not allowed to access server");
+    }
+
+})
+
+app.post('/updaterating', function (req, res) {
+    const { activity_id, rating, check_role } = req.body;
+    if (check_role == "user") {
+        const sql = "UPDATE activities SET status = ?, rating = ? WHERE activities.activity_id = ?";
+        con.query(sql, [0, rating, activity_id], function (err, result) {
+            if (err) {
+                console.log(err);
+                res.status(500).send("DATABASE ERROR");
+            } else {
+                if (result.affectedRows != 1) {
+                    console.log(err);
+                    res.status(500).send("UPDATE ERROR");
+                } else {
+                    res.send();
+                }
+
+            }
+        });
+    } else {
+        res.status(404).send("Not allowed to access server");
+    }
+
 })
 
 app.listen(3000, function () {
