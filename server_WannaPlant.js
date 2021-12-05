@@ -160,7 +160,7 @@ app.post('/registerland', function (req, res) {
 
 app.post('/login', function (req, res) {
     const { username, password } = req.body;
-    const sql = "SELECT * FROM user LEFT OUTER JOIN activities ON activities.customer = user.user_id WHERE user.username = ?";
+    const sql = "SELECT * FROM user WHERE user.username = ?";
     con.query(sql, [username], function (err, result) {
         if (err) {
             console.log(err);
@@ -360,12 +360,12 @@ app.post('/addactivity', function (req, res) {
     let datacart = JSON.parse(dataincart);
     // console.log(datacart);
     var time = new Date();
-    var date = time.getDate() + '-' + (time.getMonth() + 1) + '-' + time.getFullYear();
+    var date = time.getDate() + '/' + (time.getMonth() + 1) + '/' + time.getFullYear();
     // console.log(date);
     if (check_role == "user") {
-        const sql = "INSERT INTO activities(tracking, rating, datetime, plants_name, total_price, customer, planter, land_id) VALUES (?,?,?,?,?,?,?,?)";
+        const sql = "INSERT INTO activities(tracking, status , rating, datetime, plants_name, total_price, customer, planter, land_id) VALUES (?,?,?,?,?,?,?,?)";
         for (let i = 0; i < datacart.length; i++) {
-            con.query(sql, [0, 0, String(date), datacart[i]['plants_name'], datacart[i]['total_money'], datacart[i]['customer_id'], datacart[i]['planter_id'], datacart[i]['land_id']], function (err, result) {
+            con.query(sql, [1, 1, 0, String(date), datacart[i]['plants_name'], datacart[i]['total_money'], datacart[i]['customer_id'], datacart[i]['planter_id'], datacart[i]['land_id']], function (err, result) {
                 if (err) {
                     console.log(err);
                     res.status(500).send("DATABASE ERROR");
@@ -385,6 +385,66 @@ app.post('/addactivity', function (req, res) {
 
 
         // res.send();
+    } else {
+        res.status(404).send("Not allowed to access server");
+    }
+})
+
+app.post('/tracking', function (req, res) {
+    const { user_id, check_role } = req.body;
+    if (check_role == "user") {
+        const sql = "SELECT * FROM activities WHERE activities.customer = ? OR activities.planter = ? AND activities.status != 0 AND activities.tracking != 6";
+        con.query(sql, [user_id, user_id], function (err, result) {
+            if (err) {
+                console.log(err);
+                res.status(500).send("DATABASE ERROR");
+            } else {
+                res.send(result);
+            }
+        });
+    } else {
+        res.status(404).send("Not allowed to access server");
+    }
+
+})
+
+app.post('/getnameuser', function (req, res) {
+    const { user_id, check_role } = req.body;
+    if (check_role == "user") {
+        const sql = "SELECT user.name FROM user WHERE user.user_id = ?";
+        con.query(sql, [user_id], function (err, result) {
+            if (err) {
+                console.log(err);
+                res.status(500).send("DATABASE ERROR");
+            } else {
+                res.send(result);
+            }
+        })
+
+    } else {
+        res.status(404).send("Not allowed to access server");
+    }
+
+
+})
+
+app.post('/updatetracking', function (req, res) {
+    const { activity_id, tracking, check_role } = req.body
+    if (check_role == "user") {
+        const sql = "UPDATE activities SET tracking = ? WHERE activities.activity_id = ?";
+        con.query(sql, [tracking, activity_id], function (err, result) {
+            if (err) {
+                console.log(err);
+                res.status(500).send("DATABASE ERROR");
+            } else {
+                if (result.affectedRows != 1) {
+                    console.log(err);
+                    res.status(500).send("UPDATE ERROR");
+                } else {
+                    res.send();
+                }
+            }
+        })
     } else {
         res.status(404).send("Not allowed to access server");
     }
