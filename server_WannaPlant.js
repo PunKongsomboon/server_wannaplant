@@ -167,8 +167,10 @@ app.post('/login', function (req, res) {
             res.status(500).send("DATABASE ERROR");
         } else {
 
-            if (result.length != 1) {
-                res.status(400).send("Username wrong");
+            if (result.length > 1) {
+                res.status(404).send("Username wrong");
+            } else if (result.length == 0) {
+                res.status(404).send("No account");
             } else {
                 bcrypt.compare(password, result[0].password, function (err, resp) {
                     if (err) {
@@ -183,6 +185,38 @@ app.post('/login', function (req, res) {
             }
         }
     })
+
+})
+
+app.post('/resetpass', function (req, res) {
+    const { username, new_pass, check_role } = req.body;
+    if (check_role == "guest") {
+        const sql = "UPDATE user SET user.password = ? WHERE user.username = ?";
+        bcrypt.hash(new_pass, 10, function (err, hash) {
+            if (err) {
+                console.log(err);
+                res.status(500).send("HASH PASSWORD ERROR");
+            } else {
+                con.query(sql, [hash, username], function (err, result) {
+                    if (err) {
+                        console.log(err);
+                        res.status(500).send("DATABASE ERROR");
+                    } else {
+                        if (result.affectedRows != 1) {
+                            console.log(err);
+                            res.status(500).send("UPDATE ERROR");
+                        } else {
+                            res.send();
+                        }
+
+                    }
+                });
+            }
+        })
+
+    } else {
+        res.status(404).send("Not allowed to access server");
+    }
 
 })
 
