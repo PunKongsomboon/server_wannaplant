@@ -363,9 +363,9 @@ app.post('/addactivity', function (req, res) {
     var date = time.getDate() + '/' + (time.getMonth() + 1) + '/' + time.getFullYear();
     // console.log(date);
     if (check_role == "user") {
-        const sql = "INSERT INTO activities(tracking, status , rating, datetime, plants_name, total_price, customer, planter, land_id) VALUES (?,?,?,?,?,?,?,?)";
+        const sql = "INSERT INTO activities(tracking, status , rating, datetime, plants_name, total_price, customer, planter, land_id) VALUES (?,?,?,?,?,?,?,?,?)";
         for (let i = 0; i < datacart.length; i++) {
-            con.query(sql, [1, 1, 0, String(date), datacart[i]['plants_name'], datacart[i]['total_money'], datacart[i]['customer_id'], datacart[i]['planter_id'], datacart[i]['land_id']], function (err, result) {
+            con.query(sql, [0, 1, 0, String(date), datacart[i]['plants_name'], datacart[i]['total_money'], datacart[i]['customer_id'], datacart[i]['planter_id'], datacart[i]['land_id']], function (err, result) {
                 if (err) {
                     console.log(err);
                     res.status(500).send("DATABASE ERROR");
@@ -429,22 +429,104 @@ app.post('/getnameuser', function (req, res) {
 })
 
 app.post('/updatetracking', function (req, res) {
-    const { activity_id, tracking, check_role } = req.body
+    const { activity_id, tracking, datetime, check_role } = req.body
     if (check_role == "user") {
-        const sql = "UPDATE activities SET tracking = ? WHERE activities.activity_id = ?";
-        con.query(sql, [tracking, activity_id], function (err, result) {
-            if (err) {
-                console.log(err);
-                res.status(500).send("DATABASE ERROR");
-            } else {
-                if (result.affectedRows != 1) {
+        var time = new Date();
+        var date = time.getDate() + '/' + (time.getMonth() + 1) + '/' + time.getFullYear();
+        if (tracking == 1) {
+            const sql = "UPDATE activities SET tracking = ? , date_confirm = ? WHERE activities.activity_id = ?";
+            con.query(sql, [tracking, String(date), activity_id], function (err, result) {
+                if (err) {
                     console.log(err);
-                    res.status(500).send("UPDATE ERROR");
+                    res.status(500).send("DATABASE ERROR");
                 } else {
-                    res.send();
+                    if (result.affectedRows != 1) {
+                        console.log(err);
+                        res.status(500).send("UPDATE ERROR");
+                    } else {
+                        res.send();
+                    }
                 }
-            }
-        })
+            })
+        } else if (tracking == 2) {
+            const sql = "UPDATE activities SET tracking = ? , date_prepare = ? WHERE activities.activity_id = ?";
+            con.query(sql, [tracking, String(date), activity_id], function (err, result) {
+                if (err) {
+                    console.log(err);
+                    res.status(500).send("DATABASE ERROR");
+                } else {
+                    if (result.affectedRows != 1) {
+                        console.log(err);
+                        res.status(500).send("UPDATE ERROR");
+                    } else {
+                        res.send();
+                    }
+                }
+            })
+        } else if (tracking == 3) {
+            const sql = "UPDATE activities SET tracking = ? , date_planting = ? WHERE activities.activity_id = ?";
+            con.query(sql, [tracking, String(date), activity_id], function (err, result) {
+                if (err) {
+                    console.log(err);
+                    res.status(500).send("DATABASE ERROR");
+                } else {
+                    if (result.affectedRows != 1) {
+                        console.log(err);
+                        res.status(500).send("UPDATE ERROR");
+                    } else {
+                        res.send();
+                    }
+                }
+            })
+        } else if (tracking == 4) {
+            const sql = "UPDATE activities SET tracking = ? , date_harvest = ? WHERE activities.activity_id = ?";
+            con.query(sql, [tracking, String(date), activity_id], function (err, result) {
+                if (err) {
+                    console.log(err);
+                    res.status(500).send("DATABASE ERROR");
+                } else {
+                    if (result.affectedRows != 1) {
+                        console.log(err);
+                        res.status(500).send("UPDATE ERROR");
+                    } else {
+                        res.send();
+                    }
+                }
+            })
+        } else if (tracking == 5) {
+            const sql = "UPDATE activities SET tracking = ? , date_delivery = ? WHERE activities.activity_id = ?";
+            con.query(sql, [tracking, String(date), activity_id], function (err, result) {
+                if (err) {
+                    console.log(err);
+                    res.status(500).send("DATABASE ERROR");
+                } else {
+                    if (result.affectedRows != 1) {
+                        console.log(err);
+                        res.status(500).send("UPDATE ERROR");
+                    } else {
+                        res.send();
+                    }
+                }
+            })
+        } else if (tracking == 6) {
+            const sql = "UPDATE activities SET tracking = ? , date_success = ? WHERE activities.activity_id = ?";
+            con.query(sql, [tracking, String(date), activity_id], function (err, result) {
+                if (err) {
+                    console.log(err);
+                    res.status(500).send("DATABASE ERROR");
+                } else {
+                    if (result.affectedRows != 1) {
+                        console.log(err);
+                        res.status(500).send("UPDATE ERROR");
+                    } else {
+                        res.send();
+                    }
+                }
+            })
+        } else {
+            res.status(404).send("tracking number wrong");
+        }
+
     } else {
         res.status(404).send("Not allowed to access server");
     }
@@ -494,6 +576,44 @@ app.post('/updaterating', function (req, res) {
     } else {
         res.status(404).send("Not allowed to access server");
     }
+
+})
+
+
+app.post('/getdataactivity', function (req, res) {
+    const { user_id, check_role } = req.body;
+    if (check_role == "user") {
+        const sql = "SELECT picture.pic_name , activities.activity_id , activities.plants_name, activities.total_price , activities.customer , activities.planter , activities.status , activities.tracking , activities.rating , activities.datetime , activities.date_confirm , activities.date_prepare , activities.date_planting , activities.date_harvest , activities.date_delivery , activities.date_success , activities.land_id FROM activities JOIN lands ON lands.land_id = activities.land_id JOIN picture ON lands.land_id = picture.land_id WHERE activities.customer = ? OR activities.planter = ? AND activities.tracking >= 6 AND activities.status = 0 GROUP BY activities.activity_id";
+        con.query(sql, [user_id, user_id], function (err, result) {
+            if (err) {
+                console.log(err);
+                res.status(500).send("DATABASE ERROR");
+            } else {
+                res.send(result);
+            }
+        })
+    } else {
+        res.status(404).send("Not allowed to access server");
+    }
+
+})
+
+app.post('/getaddressdetailact', function (req, res) {
+    const { user_id, check_role } = req.body;
+    if (check_role == "user") {
+        const sql = "SELECT user.address , lands.land_area , lands.land_unit FROM user JOIN lands ON lands.user_id = user.user_id WHERE user.user_id = ?";
+        con.query(sql, [user_id], function (err, result) {
+            if (err) {
+                console.log(err);
+                res.status(500).send("DATABASE ERROR");
+            } else {
+                res.send(result);
+            }
+        })
+    } else {
+        res.status(404).send("Not allowed to access server");
+    }
+
 
 })
 
