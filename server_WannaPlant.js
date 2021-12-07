@@ -684,6 +684,26 @@ app.post('/saveeditacc', function (req, res) {
 })
 
 
+app.post('/countratingandplanted', function (req, res) {
+    const { user_id, check_role } = req.body;
+    if (check_role == "user") {
+        const sql = "SELECT SUM(activities.rating) / COUNT(activities.planter) AS rating , COUNT(activities.planter) AS planted FROM activities WHERE activities.planter = ?";
+        con.query(sql, [user_id], function (err, result) {
+            if (err) {
+                console.log(err);
+                res.status(500).send("DATABASE ERROR");
+            } else {
+                res.send(result);
+            }
+        })
+
+    } else {
+        res.status(404).send("Not allowed to access server");
+    }
+
+})
+
+
 app.listen(3000, function () {
     console.log('Server starts at port 3000');
 })
