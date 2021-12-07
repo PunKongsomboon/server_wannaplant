@@ -552,7 +552,7 @@ app.post('/updatetracking', function (req, res) {
                 }
             })
         } else if (tracking == 6) {
-            const sql = "UPDATE activities SET tracking = ? , date_success = ? WHERE activities.activity_id = ?";
+            const sql = "UPDATE activities SET tracking = ? , status = 0 , date_success = ? WHERE activities.activity_id = ?";
             con.query(sql, [tracking, String(date), activity_id], function (err, result) {
                 if (err) {
                     console.log(err);
@@ -601,12 +601,13 @@ app.post('/cancelordertracking', function (req, res) {
 app.post('/updaterating', function (req, res) {
     const { activity_id, rating, check_role } = req.body;
     if (check_role == "user") {
-        const sql = "UPDATE activities SET status = ?, rating = ? WHERE activities.activity_id = ?";
-        con.query(sql, [0, rating, activity_id], function (err, result) {
+        const sql = "UPDATE activities SET rating = ? WHERE activities.activity_id = ?";
+        con.query(sql, [rating, activity_id], function (err, result) {
             if (err) {
                 console.log(err);
                 res.status(500).send("DATABASE ERROR");
             } else {
+                console.log();
                 if (result.affectedRows != 1) {
                     console.log(err);
                     res.status(500).send("UPDATE ERROR");
