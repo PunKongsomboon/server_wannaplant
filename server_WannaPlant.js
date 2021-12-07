@@ -122,7 +122,16 @@ app.post('/registerland', function (req, res) {
                                                                 } else {
 
                                                                     if (n + 1 == filename.length) {
-                                                                        res.send();
+                                                                        const sql = "UPDATE user SET role = 2 WHERE user.user_id = ?";
+                                                                        con.query(sql, [parseInt(iduser[0]['user_id'])], function (err, result) {
+                                                                            if (err) {
+                                                                                console.log(err);
+                                                                                res.status(500).send("DATABASE ERROR");
+                                                                            } else {
+                                                                                res.send();
+                                                                            }
+                                                                        })
+
                                                                     }
                                                                 }
                                                             }
@@ -427,7 +436,7 @@ app.post('/addactivity', function (req, res) {
 app.post('/tracking', function (req, res) {
     const { user_id, check_role } = req.body;
     if (check_role == "user") {
-        const sql = "SELECT * FROM activities WHERE activities.customer = ? OR activities.planter = ? AND activities.status != 0 AND activities.tracking <= 6 ";
+        const sql = "SELECT * FROM activities WHERE activities.status != 0 AND activities.tracking < 6 ";
         con.query(sql, [user_id, user_id], function (err, result) {
             if (err) {
                 console.log(err);
@@ -617,7 +626,7 @@ app.post('/updaterating', function (req, res) {
 app.post('/getdataactivity', function (req, res) {
     const { user_id, check_role } = req.body;
     if (check_role == "user") {
-        const sql = "SELECT picture.pic_name , activities.activity_id , activities.plants_name, activities.total_price , activities.customer , activities.planter , activities.status , activities.tracking , activities.rating , activities.datetime , activities.date_confirm , activities.date_prepare , activities.date_planting , activities.date_harvest , activities.date_delivery , activities.date_success , activities.land_id FROM activities JOIN lands ON lands.land_id = activities.land_id JOIN picture ON lands.land_id = picture.land_id WHERE activities.customer = ? OR activities.planter = ? AND activities.tracking >= 6 AND activities.status = 0 GROUP BY activities.activity_id";
+        const sql = "SELECT picture.pic_name , activities.activity_id , activities.plants_name, activities.total_price , activities.customer , activities.planter , activities.status , activities.tracking , activities.rating , activities.datetime , activities.date_confirm , activities.date_prepare , activities.date_planting , activities.date_harvest , activities.date_delivery , activities.date_success , activities.land_id FROM activities JOIN lands ON lands.land_id = activities.land_id JOIN picture ON lands.land_id = picture.land_id WHERE activities.customer = ? OR activities.planter = ? AND activities.status = 0 GROUP BY activities.activity_id";
         con.query(sql, [user_id, user_id], function (err, result) {
             if (err) {
                 console.log(err);
@@ -635,7 +644,7 @@ app.post('/getdataactivity', function (req, res) {
 app.post('/getaddressdetailact', function (req, res) {
     const { user_id, check_role } = req.body;
     if (check_role == "user") {
-        const sql = "SELECT user.address , lands.land_area , lands.land_unit FROM user JOIN lands ON lands.user_id = user.user_id WHERE user.user_id = ?";
+        const sql = "SELECT user.address , lands.land_area , lands.land_unit FROM user LEFT OUTER JOIN lands ON lands.user_id = user.user_id WHERE user.user_id = ?";
         con.query(sql, [user_id], function (err, result) {
             if (err) {
                 console.log(err);
@@ -650,6 +659,30 @@ app.post('/getaddressdetailact', function (req, res) {
 
 
 })
+
+app.post('/saveeditacc', function (req, res) {
+    const { user_id, name, phonenumber, address, promptpay, check_role } = req.body;
+    if (check_role == "user") {
+        const sql = "UPDATE user SET user.name = ?, user.phonenumber = ?, user.address = ?, user.promptpay = ? WHERE user.user_id = ?";
+        con.query(sql, [name, phonenumber, address, promptpay, user_id], function (err, result) {
+            if (err) {
+                console.log(err);
+                res.status(500).send("DATABASE ERROR");
+            } else {
+                if (result.affectedRows != 1) {
+                    console.log(err);
+                    res.status(500).send("UPDATE ERROR");
+                } else {
+                    res.send();
+                }
+
+            }
+        })
+    } else {
+        res.status(404).send("Not allowed to access server");
+    }
+})
+
 
 app.listen(3000, function () {
     console.log('Server starts at port 3000');
