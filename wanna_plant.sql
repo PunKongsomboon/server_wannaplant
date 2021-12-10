@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 06, 2021 at 06:02 PM
+-- Generation Time: Dec 10, 2021 at 09:35 AM
 -- Server version: 10.4.21-MariaDB
 -- PHP Version: 7.3.31
 
@@ -175,31 +175,31 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT for table `activities`
 --
 ALTER TABLE `activities`
-  MODIFY `activity_id` mediumint(7) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `activity_id` mediumint(7) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
 
 --
 -- AUTO_INCREMENT for table `lands`
 --
 ALTER TABLE `lands`
-  MODIFY `land_id` mediumint(7) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `land_id` mediumint(7) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
 
 --
 -- AUTO_INCREMENT for table `picture`
 --
 ALTER TABLE `picture`
-  MODIFY `pic_id` mediumint(7) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
+  MODIFY `pic_id` mediumint(7) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=66;
 
 --
 -- AUTO_INCREMENT for table `plants`
 --
 ALTER TABLE `plants`
-  MODIFY `plants_id` mediumint(7) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
+  MODIFY `plants_id` mediumint(7) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=76;
 
 --
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `user_id` mediumint(7) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
+  MODIFY `user_id` mediumint(7) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=74;
 
 --
 -- Constraints for dumped tables
