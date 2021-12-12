@@ -265,6 +265,23 @@ app.post('/infoland', function (req, res) {
 
 })
 
+app.post('/countplanted', function (req, res) {
+    const { land_id, check_role } = req.body;
+    if (check_role == "user") {
+        const sql = "SELECT COUNT(activities.land_id) AS planted FROM activities WHERE activities.land_id = ?";
+        con.query(sql, [land_id], function (err, result) {
+            if (err) {
+                console.log(err);
+                res.status(500).send("DATABASE ERROR");
+            } else {
+                res.send(result);
+            }
+        })
+    } else {
+        res.status(404).send("Not allowed to access server");
+    }
+})
+
 app.post('/infolandpic', function (req, res) {
     const { idland, user_check } = req.body;
     if (user_check == "user") {
